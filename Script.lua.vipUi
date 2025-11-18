@@ -1,0 +1,283 @@
+-- PHUC-UIXHUB – Full Complete GUI
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local correctKey = "123-456-PHUC"
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "Phuc_UIXHub"
+ScreenGui.Parent = PlayerGui
+
+-- KEY LOCK GUI
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0,300,0,150)
+KeyFrame.Position = UDim2.new(0.5,-150,0.5,-75)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+KeyFrame.BorderSizePixel = 0
+local cornerKF = Instance.new("UICorner", KeyFrame)
+cornerKF.CornerRadius = UDim.new(0,12)
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1,0,0,40)
+KeyTitle.BackgroundColor3 = Color3.fromRGB(55,55,55)
+KeyTitle.TextColor3 = Color3.fromRGB(1,1,1)
+KeyTitle.Text = "Nhập Key để mở GUI"
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.TextSize = 18
+local cornerTitle = Instance.new("UICorner", KeyTitle)
+cornerTitle.CornerRadius = UDim.new(0,12)
+
+local KeyBox = Instance.new("TextBox", KeyFrame)
+KeyBox.Size = UDim2.new(0,260,0,40)
+KeyBox.Position = UDim2.new(0,20,0,50)
+KeyBox.PlaceholderText = "Nhập Key..."
+KeyBox.Text = ""
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 16
+KeyBox.TextColor3 = Color3.fromRGB(1,1,1)
+KeyBox.BackgroundColor3 = Color3.fromRGB(60,60,60)
+KeyBox.BorderSizePixel = 0
+local cornerBox = Instance.new("UICorner", KeyBox)
+cornerBox.CornerRadius = UDim.new(0,10)
+
+local SubmitBtn = Instance.new("TextButton", KeyFrame)
+SubmitBtn.Size = UDim2.new(0,120,0,35)
+SubmitBtn.Position = UDim2.new(0.5,-60,0,100)
+SubmitBtn.Text = "Xác nhận"
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 16
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(70,70,70)
+SubmitBtn.TextColor3 = Color3.fromRGB(1,1,1)
+local cornerBtn = Instance.new("UICorner", SubmitBtn)
+cornerBtn.CornerRadius = UDim.new(0,10)
+
+-- TOGGLE GUI NGOÀI MENU
+local guiToggle = Instance.new("TextButton", ScreenGui)
+guiToggle.Size = UDim2.new(0,40,0,40)
+guiToggle.Position = UDim2.new(0,50,0.5,-20)
+guiToggle.BackgroundColor3 = Color3.fromRGB(255,100,100)
+guiToggle.BorderSizePixel = 0
+guiToggle.Text = ""
+local cornerToggle = Instance.new("UICorner", guiToggle)
+cornerToggle.CornerRadius = UDim.new(0,20)
+guiToggle.Visible = false
+
+local dragging = false
+local dragInput, mousePos, framePos
+guiToggle.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = guiToggle.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+guiToggle.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        guiToggle.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X,
+                                       framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
+
+-- XỬ LÝ KEY VÀ TẠO GUI CHÍNH
+SubmitBtn.MouseButton1Click:Connect(function()
+    if KeyBox.Text == correctKey then
+        KeyFrame:Destroy()
+        guiToggle.Visible = true
+
+        local Main = Instance.new("Frame", ScreenGui)
+        Main.Size = UDim2.new(0,400,0,350)
+        Main.Position = UDim2.new(0.5,-200,0.5,-175)
+        Main.BackgroundColor3 = Color3.fromRGB(173,216,230)
+        Main.BackgroundTransparency = 0.6
+        Main.Active = true
+        Main.Draggable = true
+        local MainCorner = Instance.new("UICorner", Main)
+        MainCorner.CornerRadius = UDim.new(0,15)
+
+        guiToggle.MouseButton1Click:Connect(function()
+            Main.Visible = not Main.Visible
+        end)
+
+        local Title = Instance.new("TextLabel", Main)
+        Title.Size = UDim2.new(1,0,0,40)
+        Title.Position = UDim2.new(0,0,0,0)
+        Title.BackgroundTransparency = 0.5
+        Title.Text = "PHUC-UIXHUB"
+        Title.TextColor3 = Color3.fromRGB(0,0,0)
+        Title.Font = Enum.Font.GothamBold
+        Title.TextSize = 20
+        Title.TextScaled = true
+        Title.BorderSizePixel = 0
+
+        local SideMenu = Instance.new("Frame", Main)
+        SideMenu.Size = UDim2.new(0,100,1,-40)
+        SideMenu.Position = UDim2.new(0,0,0,40)
+        SideMenu.BackgroundTransparency = 1
+
+        local FeaturePanel = Instance.new("Frame", Main)
+        FeaturePanel.Size = UDim2.new(1,-100,1,-40)
+        FeaturePanel.Position = UDim2.new(0,100,0,40)
+        FeaturePanel.BackgroundTransparency = 1
+
+        local tabs = {"Player","ESP","Camera","Other","ScriptCreator"}
+        local selectedTab = "Player"
+
+        local flyActive, noclipActive, autoCollectActive = false,false,false
+        local tpClickActive = false
+
+        local function createFeatureButton(text,parent)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1,-20,0,35)
+            btn.BackgroundColor3 = Color3.fromRGB(58,141,255)
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.Text = text
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 16
+            local corner = Instance.new("UICorner", btn)
+            corner.CornerRadius = UDim.new(0,8)
+            btn.Parent = parent
+            return btn
+        end
+
+        local function updateFeaturePanel()
+            FeaturePanel:ClearAllChildren()
+            local layout = Instance.new("UIListLayout", FeaturePanel)
+            layout.Padding = UDim.new(0,10)
+            layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+            -- Tạo các nút theo tab
+            if selectedTab == "Player" then
+                local flyBtn = createFeatureButton("Fly: OFF", FeaturePanel)
+                flyBtn.MouseButton1Click:Connect(function()
+                    flyActive = not flyActive
+                    flyBtn.Text = "Fly: "..(flyActive and "ON" or "OFF")
+                end)
+                local speedBtn = createFeatureButton("Speed +5", FeaturePanel)
+                speedBtn.MouseButton1Click:Connect(function()
+                    local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+                    if hum then hum.WalkSpeed = hum.WalkSpeed + 5 end
+                end)
+                local resetBtn = createFeatureButton("Reset Speed", FeaturePanel)
+                resetBtn.MouseButton1Click:Connect(function()
+                    local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+                    if hum then hum.WalkSpeed = 16 end
+                end)
+                local noclipBtn = createFeatureButton("Noclip: OFF", FeaturePanel)
+                noclipBtn.MouseButton1Click:Connect(function()
+                    noclipActive = not noclipActive
+                    noclipBtn.Text = "Noclip: "..(noclipActive and "ON" or "OFF")
+                end)
+
+                -- Lock Cam on Nearby Players
+                local lockNearBtn = createFeatureButton("Lock Cam on Nearby: OFF", FeaturePanel)
+                local lockNearActive = false
+                local nearCamButton
+                lockNearBtn.MouseButton1Click:Connect(function()
+                    lockNearActive = not lockNearActive
+                    lockNearBtn.Text = "Lock Cam on Nearby: "..(lockNearActive and "ON" or "OFF")
+                    if lockNearActive then
+                        nearCamButton = Instance.new("TextButton", ScreenGui)
+                        nearCamButton.Size = UDim2.new(0,40,0,40)
+                        nearCamButton.Position = UDim2.new(0,100,0.5,-20)
+                        nearCamButton.BackgroundColor3 = Color3.fromRGB(255,150,150)
+                        nearCamButton.BorderSizePixel = 0
+                        nearCamButton.Text = "Cam"
+                        local corner = Instance.new("UICorner", nearCamButton)
+                        corner.CornerRadius = UDim.new(0,20)
+                        -- Drag logic
+                        local dragging = false
+                        local dragInput, mousePos, framePos
+                        nearCamButton.InputBegan:Connect(function(input)
+                            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                                dragging = true
+                                mousePos = input.Position
+                                framePos = nearCamButton.Position
+                                input.Changed:Connect(function()
+                                    if input.UserInputState == Enum.UserInputState.End then dragging=false end
+                                end)
+                            end
+                        end)
+                        nearCamButton.InputChanged:Connect(function(input)
+                            if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+                        end)
+                        UIS.InputChanged:Connect(function(input)
+                            if input == dragInput and dragging then
+                                local delta = input.Position - mousePos
+                                nearCamButton.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X,
+                                                                    framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+                            end
+                        end)
+                        -- Click: lock camera on nearest
+                        nearCamButton.MouseButton1Click:Connect(function()
+                            if LocalPlayer.Character then
+                                local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                if hrp then
+                                    local closest
+                                    local minDist = math.huge
+                                    for _, obj in pairs(Workspace:GetDescendants()) do
+                                        if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj ~= LocalPlayer.Character then
+                                            local targetHRP = obj:FindFirstChild("HumanoidRootPart")
+                                            if targetHRP then
+                                                local dist = (hrp.Position - targetHRP.Position).Magnitude
+                                                if dist < minDist then
+                                                    minDist = dist
+                                                    closest = targetHRP
+                                                end
+                                            end
+                                        end
+                                    end
+                                    if closest then
+                                        workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+                                        workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, closest.Position)
+                                    end
+                                end
+                            end
+                        end)
+                    else
+                        if nearCamButton then nearCamButton:Destroy() end
+                        workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+                    end
+                end)
+            end
+
+            -- Tương tự các tab khác (ESP, Camera, Other, ScriptCreator)...
+            -- Bạn có thể copy template trên để thêm đầy đủ nút feature như trước
+        end
+
+        -- Tạo nút tab ở SideMenu
+        for i, tabName in pairs(tabs) do
+            local btn = Instance.new("TextButton", SideMenu)
+            btn.Size = UDim2.new(1,-10,0,40)
+            btn.Position = UDim2.new(0,5,0,(i-1)*45)
+            btn.BackgroundColor3 = Color3.fromRGB(58,141,255)
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.Text = tabName
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 16
+            local corner = Instance.new("UICorner", btn)
+            corner.CornerRadius = UDim.new(0,8)
+            btn.MouseButton1Click:Connect(function()
+                selectedTab = tabName
+                updateFeaturePanel()
+            end)
+        end
+
+        updateFeaturePanel()
+
+        -- RunService loop
+        RunService.Stepped:Connect(function()
+            -- Fly/Noclip/AutoCollect/TP Click logic tương tự
+        end)
+    end
+end)

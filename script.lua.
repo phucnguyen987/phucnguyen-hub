@@ -1,0 +1,269 @@
+local Key = "PHUCNGUYENVIP" -- Key đúng
+local LinkGetKey = "https://pastefy.app/9NTEAOOX"
+
+-- UI Fade animation
+local function fade(obj, target, t)
+    local ts = game:GetService("TweenService")
+    ts:Create(obj, TweenInfo.new(t, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = target}):Play()
+end
+
+-- Drag Function
+local function draggable(frame)
+    local UIS = game:GetService("UserInputService")
+    local dragToggle, dragStart, startPos
+
+    frame.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragToggle = true
+            dragStart = i.Position
+            startPos = frame.Position
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(i)
+        if dragToggle and i.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = i.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    frame.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragToggle = false
+        end
+    end)
+end
+
+-----------------------------
+-- UI GET KEY
+-----------------------------
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 300, 0, 180)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(45, 90, 150)
+KeyFrame.BackgroundTransparency = 0.2
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Visible = true
+draggable(KeyFrame)
+
+fade(KeyFrame, 0.1, 0.3)
+
+local UIList = Instance.new("UIListLayout", KeyFrame)
+UIList.Padding = UDim.new(0, 10)
+
+local Title = Instance.new("TextLabel", KeyFrame)
+Title.Text = "Enter Key"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.TextScaled = true
+
+local Box = Instance.new("TextBox", KeyFrame)
+Box.Size = UDim2.new(1, -20, 0, 35)
+Box.Position = UDim2.new(0, 10, 0, 40)
+Box.PlaceholderText = "Nhập Key..."
+Box.Text = ""
+Box.BackgroundColor3 = Color3.fromRGB(60,120,200)
+Box.BorderSizePixel = 0
+Box.TextColor3 = Color3.fromRGB(255,255,255)
+Box.TextScaled = true
+Box.BackgroundTransparency = 0.2
+
+local Confirm = Instance.new("TextButton", KeyFrame)
+Confirm.Size = UDim2.new(1, -20, 0, 35)
+Confirm.Text = "Xác nhận Key"
+Confirm.BackgroundColor3 = Color3.fromRGB(35,80,150)
+Confirm.BorderSizePixel = 0
+Confirm.TextColor3 = Color3.fromRGB(255,255,255)
+Confirm.TextScaled = true
+Confirm.BackgroundTransparency = 0.1
+
+local GetKeyBtn = Instance.new("TextButton", KeyFrame)
+GetKeyBtn.Size = UDim2.new(1, -20, 0, 35)
+GetKeyBtn.Text = "Get Key"
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(30,70,130)
+GetKeyBtn.BorderSizePixel = 0
+GetKeyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+GetKeyBtn.TextScaled = true
+GetKeyBtn.BackgroundTransparency = 0.1
+
+local Status = Instance.new("TextLabel", KeyFrame)
+Status.Text = ""
+Status.Size = UDim2.new(1, 0, 0, 25)
+Status.BackgroundTransparency = 1
+Status.TextScaled = true
+Status.TextColor3 = Color3.fromRGB(255,255,255)
+
+GetKeyBtn.MouseButton1Click:Connect(function()
+    setclipboard(LinkGetKey)
+    Status.Text = "Đã sao chép link!"
+end)
+
+-----------------------------
+-- Xác nhận Key
+-----------------------------
+Confirm.MouseButton1Click:Connect(function()
+    if Box.Text == Key then
+        Status.Text = "Success!"
+        wait(1.5)
+        KeyFrame.Visible = false
+        loadUI()
+    else
+        Status.Text = "Error Key!"
+    end
+end)
+
+-----------------------------
+-- TẠO UI CHÍNH
+-----------------------------
+function loadUI()
+    local Main = Instance.new("Frame", ScreenGui)
+    Main.Size = UDim2.new(0, 380, 0, 320)
+    Main.Position = UDim2.new(0.5, -190, 0.5, -160)
+    Main.BackgroundColor3 = Color3.fromRGB(40,80,150)
+    Main.BackgroundTransparency = 0.1
+    Main.BorderSizePixel = 0
+    draggable(Main)
+    fade(Main, 0.1, 0.4)
+
+    local Tabs = Instance.new("Frame", Main)
+    Tabs.Size = UDim2.new(1, 0, 0, 40)
+    Tabs.BackgroundTransparency = 1
+
+    local HomeBtn = Instance.new("TextButton", Tabs)
+    HomeBtn.Size = UDim2.new(0, 100, 1, 0)
+    HomeBtn.Text = "Home"
+    HomeBtn.BackgroundTransparency = 1
+    HomeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    HomeBtn.TextScaled = true
+
+    local SetBtn = Instance.new("TextButton", Tabs)
+    SetBtn.Size = UDim2.new(0, 100, 1, 0)
+    SetBtn.Position = UDim2.new(0, 110, 0, 0)
+    SetBtn.Text = "Settings"
+    SetBtn.BackgroundTransparency = 1
+    SetBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    SetBtn.TextScaled = true
+
+    -- Home Tab
+    local Home = Instance.new("Frame", Main)
+    Home.Size = UDim2.new(1, 0, 1, -40)
+    Home.Position = UDim2.new(0, 0, 0, 40)
+    Home.BackgroundTransparency = 1
+
+    local INF = Instance.new("TextButton", Home)
+    INF.Position = UDim2.new(0, 20, 0, 20)
+    INF.Size = UDim2.new(0, 160, 0, 40)
+    INF.Text = "Infinite Jump"
+    INF.BackgroundColor3 = Color3.fromRGB(60,120,200)
+    INF.TextColor3 = Color3.fromRGB(255,255,255)
+    INF.BorderSizePixel = 0
+    INF.TextScaled = true
+
+    local GM = Instance.new("TextButton", Home)
+    GM.Position = UDim2.new(0, 20, 0, 70)
+    GM.Size = UDim2.new(0, 160, 0, 40)
+    GM.Text = "God Mode"
+    GM.BackgroundColor3 = Color3.fromRGB(60,120,200)
+    GM.TextColor3 = Color3.fromRGB(255,255,255)
+    GM.BorderSizePixel = 0
+    GM.TextScaled = true
+
+    local NC = Instance.new("TextButton", Home)
+    NC.Position = UDim2.new(0, 20, 0, 120)
+    NC.Size = UDim2.new(0, 160, 0, 40)
+    NC.Text = "Noclip"
+    NC.BackgroundColor3 = Color3.fromRGB(60,120,200)
+    NC.TextColor3 = Color3.fromRGB(255,255,255)
+    NC.BorderSizePixel = 0
+    NC.TextScaled = true
+
+    local SpeedBox = Instance.new("TextBox", Home)
+    SpeedBox.Position = UDim2.new(0, 20, 0, 170)
+    SpeedBox.Size = UDim2.new(0, 160, 0, 40)
+    SpeedBox.PlaceholderText = "Speed..."
+    SpeedBox.Text = ""
+    SpeedBox.BackgroundColor3 = Color3.fromRGB(60,120,200)
+    SpeedBox.TextColor3 = Color3.fromRGB(255,255,255)
+    SpeedBox.TextScaled = true
+
+    local SetSpeed = Instance.new("TextButton", Home)
+    SetSpeed.Position = UDim2.new(0, 20, 0, 220)
+    SetSpeed.Size = UDim2.new(0, 160, 0, 40)
+    SetSpeed.Text = "Apply Speed"
+    SetSpeed.BackgroundColor3 = Color3.fromRGB(60,120,200)
+    SetSpeed.TextScaled = true
+    SetSpeed.TextColor3 = Color3.fromRGB(255,255,255)
+    SetSpeed.BorderSizePixel = 0
+
+    -- Settings Tab
+    local Settings = Instance.new("Frame", Main)
+    Settings.Size = UDim2.new(1, 0, 1, -40)
+    Settings.Position = UDim2.new(0, 0, 0, 40)
+    Settings.BackgroundTransparency = 1
+    Settings.Visible = false
+
+    local ESPBtn = Instance.new("TextButton", Settings)
+    ESPBtn.Position = UDim2.new(0, 20, 0, 20)
+    ESPBtn.Size = UDim2.new(0, 200, 0, 40)
+    ESPBtn.Text = "ESP All Player"
+    ESPBtn.BackgroundColor3 = Color3.fromRGB(60,120,200)
+    ESPBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    ESPBtn.TextScaled = true
+    ESPBtn.BorderSizePixel = 0
+
+    -- TAB Switch
+    HomeBtn.MouseButton1Click:Connect(function()
+        Home.Visible = true
+        Settings.Visible = false
+    end)
+
+    SetBtn.MouseButton1Click:Connect(function()
+        Home.Visible = false
+        Settings.Visible = true
+    end)
+
+    -- FUNCTIONS
+    local UIS = game:GetService("UserInputService")
+    UIS.JumpRequest:Connect(function()
+        game.Players.LocalPlayer.Character.Humanoid:ChangeState("Jumping")
+    end)
+
+    GM.MouseButton1Click:Connect(function()
+        local h = game.Players.LocalPlayer.Character.Humanoid
+        h.Health = 999999
+        h.MaxHealth = 999999
+        h:GetPropertyChangedSignal("Health"):Connect(function()
+            h.Health = h.MaxHealth
+        end)
+    end)
+
+    NC.MouseButton1Click:Connect(function()
+        for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end)
+
+    SetSpeed.MouseButton1Click:Connect(function()
+        local s = tonumber(SpeedBox.Text)
+        if s then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+        end
+    end)
+
+    ESPBtn.MouseButton1Click:Connect(function()
+        for _, plr in pairs(game.Players:GetPlayers()) do
+            if plr ~= game.Players.LocalPlayer then
+                if plr.Character and not plr.Character:FindFirstChild("ESP") then
+                    local h = Instance.new("Highlight", plr.Character)
+                    h.Name = "ESP"
+                    h.FillColor = Color3.fromRGB(0,120,255)
+                    h.OutlineColor = Color3.fromRGB(255,255,255)
+                end
+            end
+        end
+    end)
+end

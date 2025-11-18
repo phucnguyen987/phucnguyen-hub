@@ -1,0 +1,137 @@
+--== KEY SYSTEM ==--
+local KEY = "phucnek"
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+-- GUI REFERENCES
+local gui = script.Parent.MainUI -- UI chính
+local keyUI = script.Parent.KeyUI -- UI nhập key
+local minimap = script.Parent.MiniMap
+
+gui.Visible = false
+minimap.Visible = false
+
+-- XÁC NHẬN KEY
+keyUI.Confirm.MouseButton1Click:Connect(function()
+	if keyUI.Input.Text == KEY then
+		keyUI.Visible = false
+		gui.Visible = true
+		minimap.Visible = true
+	else
+		keyUI.Status.Text = "Sai key!"
+		keyUI.Status.TextColor3 = Color3.fromRGB(255,0,0)
+	end
+end)
+
+--== DRAGGABLE UI ==--
+local frame = gui
+local dragging = false
+local dragStart, startPos
+
+frame.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = i.Position
+		startPos = frame.Position
+	end
+end)
+
+frame.InputEnded:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UIS.InputChanged:Connect(function(i)
+	if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = i.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+--== LOCK CAMERA ==--
+local lock = false
+gui.LockCam.MouseButton1Click:Connect(function()
+	lock = not lock
+	if lock then
+		UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
+	else
+		UIS.MouseBehavior = Enum.MouseBehavior.Default
+	end
+end)
+
+--== SPEED ==--
+gui.Speed.MouseButton1Click:Connect(function()
+	local hum = Character:FindFirstChild("Humanoid")
+	if hum then hum.WalkSpeed = 50 end
+end)
+
+--== FLY ==--
+local flying = false
+gui.Fly.MouseButton1Click:Connect(function()
+	flying = not flying
+	local hum = Character:FindFirstChild("HumanoidRootPart")
+	if flying then
+		RunService.RenderStepped:Connect(function()
+			if flying then
+				hum.Velocity = Vector3.new(0,40,0)
+			end
+		end)
+	end
+end)
+
+--== HIGH JUMP ==--
+gui.Jump.MouseButton1Click:Connect(function()
+	local hum = Character:FindFirstChild("Humanoid")
+	if hum then hum.JumpPower = 200 hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+end)
+
+--== SPIN PLAYER ==--
+local spinning = false
+gui.Spin.MouseButton1Click:Connect(function()
+	spinning = not spinning
+	local root = Character:FindFirstChild("HumanoidRootPart")
+	
+	if spinning then
+		RunService.RenderStepped:Connect(function()
+			if spinning and root then
+				root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(30), 0)
+			end
+		end)
+	end
+end)
+
+--== ESP HIGHLIGHT ==--
+gui.ESP.MouseButton1Click:Connect(function()
+	for _,plr in pairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer and plr.Character then
+			if not plr.Character:FindFirstChild("Highlight") then
+				local h = Instance.new("Highlight")
+				h.FillColor = Color3.fromRGB(0,170,255)
+				h.OutlineColor = Color3.fromRGB(255,255,255)
+				h.Parent = plr.Character
+			end
+		end
+	end
+end)
+
+--== MINIMAP PLAYER ICONS ==--
+RunService.RenderStepped:Connect(function()
+	minimap.PlayersFolder:ClearAllChildren()
+	for _,plr in pairs(Players:GetPlayers()) do
+		if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+			local icon = Instance.new("Frame")
+			icon.Size = UDim2.new(0,8,0,8)
+			icon.BackgroundColor3 = plr.TeamColor.Color
+			icon.Position = UDim2.new(0, plr.Character.HumanoidRootPart.Position.X/5, 0, plr.Character.HumanoidRootPart.Position.Z/5)
+			icon.Parent = minimap.PlayersFolder
+		end
+	end
+end)

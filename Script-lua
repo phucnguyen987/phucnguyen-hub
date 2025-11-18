@@ -1,0 +1,397 @@
+--========================================================--
+--== INTRO ==============================================--
+--========================================================--
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+
+StarterGui:SetCore("ResetButtonCallback", false)
+
+local intro = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+intro.IgnoreGuiInset = true
+intro.ResetOnSpawn = false
+
+local fade = Instance.new("Frame", intro)
+fade.Size = UDim2.new(1,0,1,0)
+fade.BackgroundColor3 = Color3.new(0,0,0)
+
+local txt = Instance.new("TextLabel", fade)
+txt.Size = UDim2.new(1,0,1,0)
+txt.BackgroundTransparency = 1
+txt.Text = "SCRIPT BY PHUCNGUYEN"
+txt.TextColor3 = Color3.new(1,1,1)
+txt.TextSize = 45
+txt.Font = Enum.Font.GothamBold
+txt.TextTransparency = 1
+
+for i=1,20 do
+	txt.TextTransparency = 1 - i/20
+	task.wait(0.05)
+end
+
+task.wait(1)
+
+for i=1,20 do
+	fade.BackgroundTransparency = i/20
+	txt.TextTransparency = i/20
+	task.wait(0.05)
+end
+
+intro:Destroy()
+
+
+--========================================================--
+--== KEY SYSTEM ==========================================--
+--========================================================--
+
+local correctKey = "phucnek"
+
+local KeyGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+KeyGui.ResetOnSpawn = false
+KeyGui.IgnoreGuiInset = true
+
+local KFrame = Instance.new("Frame", KeyGui)
+KFrame.Size = UDim2.new(0,420,0,260)
+KFrame.Position = UDim2.new(0.35,0,0.28,0)
+KFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", KFrame).CornerRadius = UDim.new(0,10)
+
+local title = Instance.new("TextLabel", KFrame)
+title.Size = UDim2.new(1,0,0,45)
+title.BackgroundTransparency = 1
+title.Text = "NHẬP KEY"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 30
+
+local KeyBox = Instance.new("TextBox", KFrame)
+KeyBox.Size = UDim2.new(1,-40,0,50)
+KeyBox.Position = UDim2.new(0,20,0,60)
+KeyBox.PlaceholderText = "Nhập key..."
+KeyBox.BackgroundColor3 = Color3.fromRGB(60,60,60)
+KeyBox.TextColor3 = Color3.new(1,1,1)
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 20
+Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0,10)
+
+local Confirm = Instance.new("TextButton", KFrame)
+Confirm.Size = UDim2.new(1,-40,0,50)
+Confirm.Position = UDim2.new(0,20,0,120)
+Confirm.Text = "Xác nhận"
+Confirm.BackgroundColor3 = Color3.fromRGB(70,70,70)
+Confirm.Font = Enum.Font.GothamBold
+Confirm.TextColor3 = Color3.new(1,1,1)
+Confirm.TextSize = 22
+Instance.new("UICorner", Confirm).CornerRadius = UDim.new(0,10)
+
+local GetKey = Instance.new("TextButton", KFrame)
+GetKey.Size = UDim2.new(1,-40,0,50)
+GetKey.Position = UDim2.new(0,20,0,180)
+GetKey.Text = "GET KEY"
+GetKey.BackgroundColor3 = Color3.fromRGB(70,70,70)
+GetKey.Font = Enum.Font.GothamBold
+GetKey.TextColor3 = Color3.new(1,1,1)
+GetKey.TextSize = 22
+Instance.new("UICorner", GetKey).CornerRadius = UDim.new(0,10)
+
+local Notify = Instance.new("TextLabel", KFrame)
+Notify.Size = UDim2.new(1,0,0,35)
+Notify.Position = UDim2.new(0,0,0,-40)
+Notify.TextColor3 = Color3.new(1,1,1)
+Notify.Font = Enum.Font.GothamBold
+Notify.BackgroundTransparency = 1
+Notify.TextTransparency = 1
+Notify.TextSize = 22
+
+local function ShowMsg(text,color)
+	Notify.Text = text
+	Notify.TextColor3 = color
+	Notify.TextTransparency = 0
+	task.wait(1.6)
+	for i=0,1,0.1 do
+		Notify.TextTransparency = i
+		task.wait(0.03)
+	end
+end
+
+GetKey.MouseButton1Click:Connect(function()
+	setclipboard("https://pastefy.app/9NTEAOOX")
+	ShowMsg("Đã sao chép GetKey!", Color3.fromRGB(0,255,255))
+end)
+
+local KeyOK = false
+
+Confirm.MouseButton1Click:Connect(function()
+	if KeyBox.Text == correctKey then
+		KeyOK = true
+		ShowMsg("Success!", Color3.fromRGB(0,255,0))
+		task.wait(1)
+		KeyGui:Destroy()
+	else
+		ShowMsg("Sai Key!", Color3.fromRGB(255,0,0))
+	end
+end)
+
+repeat task.wait() until KeyOK == true
+
+
+--========================================================--
+--== MAIN UI =============================================--
+--========================================================--
+
+local MainGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+MainGui.IgnoreGuiInset = true
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0,480,0,340)
+MainFrame.Position = UDim2.new(0.32,0,0.25,0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(70,120,255) -- Xanh dương nhạt
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)
+
+local UIS = game:GetService("UserInputService")
+
+-- Drag
+local drag = false
+local startPos, startDrag
+
+MainFrame.InputBegan:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		drag = true
+		startDrag = i.Position
+		startPos = MainFrame.Position
+	end
+end)
+
+MainFrame.InputChanged:Connect(function(i)
+	if drag and i.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = i.Position - startDrag
+		MainFrame.Position = UDim2.new(
+			startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+MainFrame.InputEnded:Connect(function(i)
+	if i.UserInputType == Enum.UserInputType.MouseButton1 then
+		drag = false
+	end
+end)
+
+-- Toggle UI
+local Toggle = Instance.new("TextButton", MainGui)
+Toggle.Size = UDim2.new(0,40,0,40)
+Toggle.Position = UDim2.new(0.92,0,0.15,0)
+Toggle.Text = "≡"
+Toggle.BackgroundColor3 = Color3.fromRGB(50,80,180)
+Toggle.TextColor3 = Color3.new(1,1,1)
+Toggle.Font = Enum.Font.GothamBold
+Toggle.TextSize = 24
+Instance.new("UICorner", Toggle).CornerRadius = UDim.new(1,0)
+
+Toggle.MouseButton1Click:Connect(function()
+	MainFrame.Visible = not MainFrame.Visible
+end)
+
+
+--========================================================--
+--== TABS ================================================--
+--========================================================--
+
+local Tabs = Instance.new("Frame", MainFrame)
+Tabs.Size = UDim2.new(1,0,0,50)
+Tabs.BackgroundTransparency = 1
+
+local function MakeTab(name,x)
+	local t = Instance.new("TextButton", Tabs)
+	t.Size = UDim2.new(0,150,0,45)
+	t.Position = UDim2.new(0,x,0,0)
+	t.Text = name
+	t.Font = Enum.Font.GothamBold
+	t.TextColor3 = Color3.new(1,1,1)
+	t.TextSize = 20
+	t.BackgroundColor3 = Color3.fromRGB(80,120,255)
+	Instance.new("UICorner", t).CornerRadius = UDim.new(0,10)
+	return t
+end
+
+local HomeTab = MakeTab("Home",10)
+local SettingsTab = MakeTab("Settings",165)
+local AdminTab = MakeTab("Admin",320)
+
+
+--========================================================--
+--== FRAMES ==============================================--
+--========================================================--
+
+local Home = Instance.new("Frame", MainFrame)
+Home.Size = UDim2.new(1,-20,1,-60)
+Home.Position = UDim2.new(0,10,0,55)
+Home.BackgroundTransparency = 1
+
+local Settings = Home:Clone()
+Settings.Parent = MainFrame
+Settings.Visible = false
+
+local Admin = Home:Clone()
+Admin.Parent = MainFrame
+Admin.Visible = false
+
+HomeTab.MouseButton1Click:Connect(function()
+	Home.Visible = true
+	Settings.Visible = false
+	Admin.Visible = false
+end)
+
+SettingsTab.MouseButton1Click:Connect(function()
+	Home.Visible = false
+	Settings.Visible = true
+	Admin.Visible = false
+end)
+
+AdminTab.MouseButton1Click:Connect(function()
+	Home.Visible = false
+	Settings.Visible = false
+	Admin.Visible = true
+end)
+
+
+--========================================================--
+--== BUTTON CREATOR ======================================--
+--========================================================--
+
+local function MakeBtn(parent,text,y)
+	local b = Instance.new("TextButton", parent)
+	b.Size = UDim2.new(1,-20,0,45)
+	b.Position = UDim2.new(0,10,0,y)
+	b.BackgroundColor3 = Color3.fromRGB(90,140,255)
+	b.Font = Enum.Font.GothamBold
+	b.Text = text
+	b.TextColor3 = Color3.new(1,1,1)
+	b.TextSize = 20
+	Instance.new("UICorner", b).CornerRadius = UDim.new(0,10)
+	return b
+end
+
+
+--========================================================--
+--== HOME TAB ============================================--
+--========================================================--
+
+local BJump = MakeBtn(Home,"Nhảy vô hạn",0)
+local BSpeed = MakeBtn(Home,"Chỉnh tốc độ",55)
+local BNoclip = MakeBtn(Home,"Noclip",110)
+local BTP = MakeBtn(Home,"Teleport Tool",165)
+
+-- Infinite Jump
+UIS.JumpRequest:Connect(function()
+	if LocalPlayer.Character then
+		LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+	end
+end)
+
+-- Speed
+BSpeed.MouseButton1Click:Connect(function()
+	local p = Instance.new("Frame", MainGui)
+	p.Size = UDim2.new(0,250,0,150)
+	p.Position = UDim2.new(0.37,0,0.35,0)
+	p.BackgroundColor3 = Color3.fromRGB(60,100,230)
+Instance.new("UICorner", p).CornerRadius = UDim.new(0,10)
+
+	local box = Instance.new("TextBox", p)
+	box.Size = UDim2.new(1,-20,0,40)
+	box.Position = UDim2.new(0,10,0,45)
+	box.PlaceholderText = "Tốc độ..."
+	box.TextColor3 = Color3.new(1,1,1)
+	box.Font = Enum.Font.GothamBold
+	box.TextSize = 20
+	box.BackgroundColor3 = Color3.fromRGB(80,120,250)
+Instance.new("UICorner", box).CornerRadius = UDim.new(0,10)
+
+	local ok = Instance.new("TextButton", p)
+	ok.Size = UDim2.new(1,-20,0,40)
+	ok.Position = UDim2.new(0,10,0,95)
+	ok.Text = "Áp dụng"
+	ok.Font = Enum.Font.GothamBold
+	ok.TextColor3 = Color3.new(1,1,1)
+	ok.BackgroundColor3 = Color3.fromRGB(100,150,255)
+Instance.new("UICorner", ok).CornerRadius = UDim.new(0,10)
+
+	ok.MouseButton1Click:Connect(function()
+		local s = tonumber(box.Text)
+		if s and LocalPlayer.Character then
+			LocalPlayer.Character.Humanoid.WalkSpeed = s
+		end
+		p:Destroy()
+	end)
+end)
+
+-- Noclip
+local noclip = false
+BNoclip.MouseButton1Click:Connect(function()
+	noclip = not noclip
+end)
+
+game:GetService("RunService").Stepped:Connect(function()
+	if noclip and LocalPlayer.Character then
+		for _,v in pairs(LocalPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") then v.CanCollide = false end
+		end
+	end
+end)
+
+-- TP tool
+BTP.MouseButton1Click:Connect(function()
+	local tool = Instance.new("Tool")
+	tool.RequiresHandle = false
+	tool.Name = "TP Tool"
+	tool.Activated:Connect(function()
+		local m = LocalPlayer:GetMouse()
+		if m.Hit then
+			LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(m.Hit.p)
+		end
+	end)
+	tool.Parent = LocalPlayer.Backpack
+end)
+
+
+--========================================================--
+--== SETTINGS TAB ========================================--
+--========================================================--
+
+local ChangeColor = MakeBtn(Settings,"Đổi màu UI",0)
+
+ChangeColor.MouseButton1Click:Connect(function()
+	MainFrame.BackgroundColor3 = Color3.fromRGB(90,150,255)
+end)
+
+
+--========================================================--
+--== ADMIN TAB ===========================================--
+--========================================================--
+
+local BESPToggle = MakeBtn(Admin,"ESP người chơi",0)
+local espOn = false
+local HL = {}
+
+BESPToggle.MouseButton1Click:Connect(function()
+	espOn = not espOn
+	if not espOn then
+		for _,h in pairs(HL) do h:Destroy() end
+		HL = {}
+	end
+end)
+
+Players.PlayerAdded:Connect(function(p)
+	p.CharacterAdded:Connect(function(c)
+		if espOn then
+			local h = Instance.new("Highlight")
+			h.FillTransparency = 1
+			h.OutlineColor = Color3.fromRGB(0,255,0)
+			h.Parent = c
+			HL[p] = h
+		end
+	end)
+end)

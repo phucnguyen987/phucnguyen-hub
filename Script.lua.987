@@ -1,0 +1,396 @@
+-- PHUC-UIXHUB FULL HOÀN CHỈNH
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+local correctKey = "uixhub"
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- SCREEN GUI
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+ScreenGui.Name = "Phuc_UIXHub"
+
+-- KEY FRAME
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0,300,0,150)
+KeyFrame.Position = UDim2.new(0.5,-150,0.5,-75)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+local cornerKF = Instance.new("UICorner", KeyFrame)
+cornerKF.CornerRadius = UDim.new(0,12)
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1,0,0,40)
+KeyTitle.BackgroundColor3 = Color3.fromRGB(55,55,55)
+KeyTitle.TextColor3 = Color3.new(1,1,1)
+KeyTitle.Text = "Nhập Key để mở GUI"
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.TextSize = 18
+local cornerTitle = Instance.new("UICorner", KeyTitle)
+cornerTitle.CornerRadius = UDim.new(0,12)
+
+local KeyBox = Instance.new("TextBox", KeyFrame)
+KeyBox.Size = UDim2.new(0,260,0,40)
+KeyBox.Position = UDim2.new(0,20,0,50)
+KeyBox.PlaceholderText = "Nhập Key..."
+KeyBox.Text = ""
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 16
+KeyBox.TextColor3 = Color3.new(1,1,1)
+KeyBox.BackgroundColor3 = Color3.fromRGB(60,60,60)
+KeyBox.BorderSizePixel = 0
+local cornerBox = Instance.new("UICorner", KeyBox)
+cornerBox.CornerRadius = UDim.new(0,10)
+
+local SubmitBtn = Instance.new("TextButton", KeyFrame)
+SubmitBtn.Size = UDim2.new(0,120,0,35)
+SubmitBtn.Position = UDim2.new(0.5,-60,0,100)
+SubmitBtn.Text = "Xác nhận"
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 16
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(70,70,70)
+SubmitBtn.TextColor3 = Color3.new(1,1,1)
+local cornerBtn = Instance.new("UICorner", SubmitBtn)
+cornerBtn.CornerRadius = UDim.new(0,10)
+
+-- Toggle ngoài menu
+local guiToggle = Instance.new("TextButton", ScreenGui)
+guiToggle.Size = UDim2.new(0,40,0,40)
+guiToggle.Position = UDim2.new(0,50,0.5,-20)
+guiToggle.BackgroundColor3 = Color3.fromRGB(255,100,100)
+guiToggle.BorderSizePixel = 0
+guiToggle.Text = ""
+local cornerToggle = Instance.new("UICorner", guiToggle)
+cornerToggle.CornerRadius = UDim.new(0,20)
+guiToggle.Visible = false
+
+-- Drag logic toggle
+do
+    local dragging, dragInput, mousePos, framePos = false,nil,Vector3.new(),UDim2.new()
+    guiToggle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            mousePos = Vector3.new(input.Position.X, input.Position.Y, 0)
+            framePos = guiToggle.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging=false end
+            end)
+        end
+    end)
+    guiToggle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+    end)
+    UIS.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = Vector3.new(input.Position.X, input.Position.Y,0)-mousePos
+            guiToggle.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset+delta.X, framePos.Y.Scale, framePos.Y.Offset+delta.Y)
+        end
+    end)
+end
+
+-- Humanoid helper
+local function getHumanoid()
+    local char = LocalPlayer.Character
+    if char then
+        return char:FindFirstChild("Humanoid"), char:FindFirstChild("HumanoidRootPart")
+    end
+end
+
+-- Xác nhận Key
+SubmitBtn.MouseButton1Click:Connect(function()
+    if KeyBox.Text:lower() == correctKey then
+        KeyFrame:Destroy()
+        guiToggle.Visible = true
+
+        -- Main Menu
+        local Main = Instance.new("Frame", ScreenGui)
+        Main.Size = UDim2.new(0,400,0,350)
+        Main.Position = UDim2.new(0.5,-200,0.5,-175)
+        Main.BackgroundColor3 = Color3.fromRGB(173,216,230)
+        Main.BackgroundTransparency = 0.4
+        Main.Active = true
+        Main.Draggable = true
+        local MainCorner = Instance.new("UICorner", Main)
+        MainCorner.CornerRadius = UDim.new(0,15)
+
+        guiToggle.MouseButton1Click:Connect(function()
+            Main.Visible = not Main.Visible
+        end)
+
+        local Title = Instance.new("TextLabel", Main)
+        Title.Size = UDim2.new(1,0,0,40)
+        Title.Position = UDim2.new(0,0,0,0)
+        Title.BackgroundTransparency = 0.5
+        Title.Text = "PHUC-UIXHUB"
+        Title.TextColor3 = Color3.fromRGB(0,0,0)
+        Title.Font = Enum.Font.GothamBold
+        Title.TextSize = 20
+        Title.TextScaled = true
+        Title.BorderSizePixel = 0
+
+        -- SideMenu
+        local SideMenu = Instance.new("Frame", Main)
+        SideMenu.Size = UDim2.new(0,100,1,-40)
+        SideMenu.Position = UDim2.new(0,0,0,40)
+        SideMenu.BackgroundTransparency = 1
+
+        local FeaturePanel = Instance.new("Frame", Main)
+        FeaturePanel.Size = UDim2.new(1,-100,1,-40)
+        FeaturePanel.Position = UDim2.new(0,100,0,40)
+        FeaturePanel.BackgroundTransparency = 1
+
+        local tabs = {"Player","ESP","Camera","Other","ScriptCreator"}
+        local selectedTab = "Player"
+
+        -- Feature states
+        local noclipActive,autoCollectActive,toolActive,lockCamActive,camZoomActive,camLockActive = false,false,false,false,false,false
+        local originalCamType
+        local camLockGUI
+
+        -- Create Feature Button
+        local function createFeatureButton(text,parent)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1,-20,0,35)
+            btn.BackgroundColor3 = Color3.fromRGB(58,141,255)
+            btn.TextColor3 = Color3.new(1,1,1)
+            btn.Text = text
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 16
+            local corner = Instance.new("UICorner", btn)
+            corner.CornerRadius = UDim.new(0,8)
+            btn.Parent = parent
+            return btn
+        end
+
+        -- Update Feature Panel
+        local function updateFeaturePanel()
+            FeaturePanel:ClearAllChildren()
+            local layout = Instance.new("UIListLayout", FeaturePanel)
+            layout.Padding = UDim.new(0,10)
+            layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+            -- Player Tab
+            if selectedTab=="Player" then
+                local speedBtn = createFeatureButton("Speed +5", FeaturePanel)
+                speedBtn.MouseButton1Click:Connect(function()
+                    local hum,_ = getHumanoid()
+                    if hum then hum.WalkSpeed +=5 end
+                end)
+                local resetBtn = createFeatureButton("Reset Speed", FeaturePanel)
+                resetBtn.MouseButton1Click:Connect(function()
+                    local hum,_ = getHumanoid()
+                    if hum then hum.WalkSpeed = 16 end
+                end)
+                local noclipBtn = createFeatureButton("Noclip: OFF", FeaturePanel)
+                noclipBtn.MouseButton1Click:Connect(function()
+                    noclipActive = not noclipActive
+                    noclipBtn.Text = "Noclip: "..(noclipActive and "ON" or "OFF")
+                end)
+            -- ESP Tab
+            elseif selectedTab=="ESP" then
+                local espBtn = createFeatureButton("ESP: OFF", FeaturePanel)
+                local espActive = false
+                local function applyESP(plr)
+                    if plr==LocalPlayer then return end
+                    if plr.Character and not plr.Character:FindFirstChild("ESP_Highlight") then
+                        local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            local highlight = Instance.new("Highlight")
+                            highlight.Name = "ESP_Highlight"
+                            highlight.FillColor = Color3.fromRGB(255,0,0)
+                            highlight.FillTransparency = 0.7
+                            highlight.OutlineColor = Color3.fromRGB(255,255,255)
+                            highlight.OutlineTransparency = 0
+                            highlight.Adornee = plr.Character
+                            highlight.Parent = plr.Character
+                        end
+                    end
+                end
+                espBtn.MouseButton1Click:Connect(function()
+                    espActive = not espActive
+                    espBtn.Text = "ESP: "..(espActive and "ON" or "OFF")
+                    if espActive then
+                        for _,p in pairs(Players:GetPlayers()) do
+                            applyESP(p)
+                            p.CharacterAdded:Connect(function() applyESP(p) end)
+                        end
+                        Players.PlayerAdded:Connect(function(p) p.CharacterAdded:Connect(function() applyESP(p) end) end)
+                    else
+                        for _,p in pairs(Players:GetPlayers()) do
+                            if p.Character then
+                                local h = p.Character:FindFirstChild("ESP_Highlight")
+                                if h then h:Destroy() end
+                            end
+                        end
+                    end
+                end)
+
+                local collectBtn = createFeatureButton("Auto Collect: OFF", FeaturePanel)
+                collectBtn.MouseButton1Click:Connect(function()
+                    autoCollectActive = not autoCollectActive
+                    collectBtn.Text = "Auto Collect: "..(autoCollectActive and "ON" or "OFF")
+                end)
+            -- Camera Tab
+            elseif selectedTab=="Camera" then
+                local lockBtn = createFeatureButton("Lock Camera: OFF", FeaturePanel)
+                lockBtn.MouseButton1Click:Connect(function()
+                    lockCamActive = not lockCamActive
+                    lockBtn.Text = "Lock Camera: "..(lockCamActive and "ON" or "OFF")
+                    UIS.MouseBehavior = lockCamActive and Enum.MouseBehavior.LockCenter or Enum.MouseBehavior.Default
+                end)
+                local keyBtn = createFeatureButton("Menu Key", FeaturePanel)
+                keyBtn.MouseButton1Click:Connect(function()
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title="Key System",
+                        Text="Key của bạn: "..correctKey,
+                        Duration=4
+                    })
+                end)
+            -- Other Tab
+            elseif selectedTab=="Other" then
+                -- Tool TP
+                local toolBtn = createFeatureButton("Tool TP", FeaturePanel)
+                toolBtn.MouseButton1Click:Connect(function()
+                    local backpack = LocalPlayer:FindFirstChild("Backpack")
+                    if backpack and not backpack:FindFirstChild("PhucTool") then
+                        local tool = Instance.new("Tool")
+                        tool.Name = "PhucTool"
+                        tool.RequiresHandle = false
+                        local clickScript = Instance.new("LocalScript")
+                        clickScript.Source = [[
+                            local tool = script.Parent
+                            local player = game.Players.LocalPlayer
+                            tool.Activated:Connect(function()
+                                local mouse = player:GetMouse()
+                                local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                                if hrp and mouse.Hit then
+                                    hrp.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(0,3,0))
+                                end
+                            end)
+                        ]]
+                        clickScript.Parent = tool
+                        tool.Parent = backpack
+                    end
+                end)
+
+                -- CamLock
+                local camLockBtn = createFeatureButton("CamLock: OFF", FeaturePanel)
+                camLockBtn.MouseButton1Click:Connect(function()
+                    camLockActive = not camLockActive
+                    camLockBtn.Text = "CamLock: "..(camLockActive and "ON" or "OFF")
+                    if camLockActive and not camLockGUI then
+                        camLockGUI = Instance.new("TextButton", ScreenGui)
+                        camLockGUI.Size = UDim2.new(0,50,0,50)
+                        camLockGUI.Position = UDim2.new(0.5,-25,0.5,-25)
+                        camLockGUI.BackgroundColor3 = Color3.fromRGB(255,100,100)
+                        camLockGUI.Text = "CamLock"
+                        local corner = Instance.new("UICorner", camLockGUI)
+                        corner.CornerRadius = UDim.new(0,25)
+                        -- Drag logic
+                        local dragging=false;local dragInput;local mousePos; local framePos
+                        camLockGUI.InputBegan:Connect(function(input)
+                            if input.UserInputType==Enum.UserInputType.MouseButton1 then
+                                dragging=true; mousePos=input.Position; framePos=camLockGUI.Position
+                                input.Changed:Connect(function() if input.UserInputState==Enum.UserInputState.End then dragging=false end end)
+                            end
+                        end)
+                        camLockGUI.InputChanged:Connect(function(input) if input.UserInputType==Enum.UserInputType.MouseMovement then dragInput=input end end)
+                        UIS.InputChanged:Connect(function(input) if input==dragInput and dragging then local delta=input.Position-mousePos; camLockGUI.Position=UDim2.new(framePos.X.Scale, framePos.X.Offset+delta.X, framePos.Y.Scale, framePos.Y.Offset+delta.Y) end end)
+                        camLockGUI.MouseButton1Click:Connect(function()
+                            camLockActive = not camLockActive
+                            camLockBtn.Text = "CamLock: "..(camLockActive and "ON" or "OFF")
+                        end)
+                    end
+                end)
+
+                -- Camera Zoom
+                local camZoomBtn = createFeatureButton("Camera Zoom: OFF", FeaturePanel)
+                camZoomBtn.MouseButton1Click:Connect(function()
+                    camZoomActive = not camZoomActive
+                    camZoomBtn.Text = "Camera Zoom: "..(camZoomActive and "ON" or "OFF")
+                    local cam = workspace.CurrentCamera
+                    if camZoomActive then
+                        originalCamType = cam.CameraType
+                        cam.CameraType = Enum.CameraType.Scriptable
+                        local _,hrp = getHumanoid()
+                        if hrp then
+                            cam.CFrame = CFrame.new(hrp.Position+Vector3.new(0,10,20), hrp.Position)
+                        end
+                    else
+                        cam.CameraType = originalCamType or Enum.CameraType.Custom
+                    end
+                end)
+            -- ScriptCreator Tab
+            elseif selectedTab=="ScriptCreator" then
+                local label = Instance.new("TextLabel", FeaturePanel)
+                label.Size = UDim2.new(1,-20,0,50)
+                label.BackgroundColor3 = Color3.fromRGB(50,50,50)
+                label.TextColor3 = Color3.new(1,1,1)
+                label.Text = "SCRIPT CREATOR BY PHUCNGUYEN X HUB"
+                label.Font = Enum.Font.GothamBold
+                label.TextScaled = true
+                label.TextWrapped = true
+            end
+        end
+
+        -- Create tabs buttons
+        for i, tabName in pairs(tabs) do
+            local btn = Instance.new("TextButton", SideMenu)
+            btn.Size = UDim2.new(1,-10,0,40)
+            btn.Position = UDim2.new(0,5,0,(i-1)*45)
+            btn.BackgroundColor3 = Color3.fromRGB(58,141,255)
+            btn.TextColor3 = Color3.new(1,1,1)
+            btn.Text = tabName
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 16
+            local corner = Instance.new("UICorner", btn)
+            corner.CornerRadius = UDim.new(0,8)
+            btn.MouseButton1Click:Connect(function()
+                selectedTab = tabName
+                updateFeaturePanel()
+            end)
+        end
+
+        updateFeaturePanel()
+
+        -- RunService loop
+        RunService.Stepped:Connect(function()
+            -- Noclip
+            if noclipActive then
+                local char = LocalPlayer.Character
+                if char then
+                    for _,v in pairs(char:GetDescendants()) do
+                        if v:IsA("BasePart") then v.CanCollide=false end
+                    end
+                end
+            end
+            -- AutoCollect
+            if autoCollectActive then
+                for _,obj in pairs(Workspace:GetDescendants()) do
+                    if obj:IsA("ProximityPrompt") then
+                        fireproximityprompt(obj)
+                    end
+                end
+            end
+            -- CamLock
+            if camLockActive then
+                local cam = workspace.CurrentCamera
+                local char, hrp = getHumanoid()
+                if hrp then
+                    local closest
+                    local shortest = math.huge
+                    for _, obj in pairs(Workspace:GetChildren()) do
+                        if obj:IsA("Model") and obj~=char then
+                            local part = obj:FindFirstChild("HumanoidRootPart") or obj:FindFirstChildWhichIsA("BasePart")
+                            if part then
+                                local dist=(hrp.Position-part.Position).Magnitude
+                                if dist<shortest then closest=part; shortest=dist end
+                            end
+                        end
+                    end
+                    if closest then cam.CFrame=CFrame.new(cam.CFrame.Position, closest.Position) end
+                end
+            end
+        end)
+    end
+end)
